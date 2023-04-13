@@ -1,18 +1,19 @@
 ![image](ChatNetsuite_logo.png)
 
-# ChatNetsuite 0.0.1
+# ChatNetsuite 0.0.2
 
 ChatNetsuite是一个部署在Netsuite上的带有用户界面的聊天机器人，使用OpenAI的API。  
 
 [English Documentation](README.md)  
 
 ## 目录
-- [使用说明](#usage)
-- [维护人员](#maintainers)
-- [贡献](#contributing)
-- [免责声明](#disclaimer)
+- [部署说明](#部署说明)
+- [维护人员](#维护人员)
+- [贡献](#贡献)
+- [免责声明](#免责声明)
+- [更新日志](#更新日志)
 
-## 使用说明
+## 部署说明
 要在NetSuite中使用ChatNetsuite，您可以按照以下步骤操作：
 1. 将chatNetsuite.js上传到文件柜中的SuiteScripts文件夹中。
 2. 转到Customization > Scripts > New。
@@ -42,3 +43,8 @@ ChatNetsuite是一个部署在Netsuite上的带有用户界面的聊天机器人
 3. 传播任何可能造成伤害的个人信息。
 4. 传播虚假信息。
 5. 针对弱势群体。
+
+## 更新日志
+
+V0.02 - 2023年4月13日:  
+将模型由 text-davinci-003 更新为 gpt-3.5-turbo

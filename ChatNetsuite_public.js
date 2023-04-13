@@ -8,13 +8,17 @@
 define(['N/https', 'N/ui/serverWidget'],
     (https, serverWidget) => {
 
-        const VERSION_NO = '0.01';
+        const VERSION_NO = '0.02';
         // ENTER YOUR SCRIPT URL HERE
         const SCRIPT_URL = 'https://1234567.app.netsuite.com/app/site/hosting/scriptlet.nl?script=1234&deploy=1';
+        const API_URL = 'https://api.openai.com/v1/chat/completions';
         // ENTER YOUR API KEY HERE
         const OPENAI_KEY = 'sk-123456789012345678901234567890123456789012345678';
-        const MODEL = 'text-davinci-003';
-        const MAX_TOKENS = 500;
+        const HEADERS = {
+            'Content-Type': 'application/json; charset=utf-8',
+            'Authorization': 'Bearer ' + OPENAI_KEY
+        };
+        const MODEL = 'gpt-3.5-turbo';
 
         /**
          * Handles the request when a user visits the page.
@@ -53,29 +57,27 @@ define(['N/https', 'N/ui/serverWidget'],
         const answerPage = (scriptContext) => {
             let text = scriptContext.request.parameters.custpage_input;
             log.debug("-> text", text);
-            // Set API URL, headers and payload
-            const apiUrl = 'https://api.openai.com/v1/completions';
-            const headers = {
-                'Content-Type': 'application/json; charset=utf-8',
-                'Authorization': 'Bearer ' + OPENAI_KEY
-            };
+            // Set payload
             let payload = {
                 "model": MODEL,
-                "prompt": text,
-                "max_tokens": MAX_TOKENS
+                "messages": [{"role": 'user', "content": text}],
+                // "temperature": 1,
+                // "top_p": 1,
+                // "n": 1,
+                // "stream": false
             };
             // Make API call
             let response = https.post({
-                url: apiUrl,
+                url: API_URL,
                 body: JSON.stringify(payload),
-                headers: headers
+                headers: HEADERS
             });
             log.debug('response body', JSON.parse(response.body));
             // Handle response codes
             let answer;
             switch (response.code) {
                 case 200:
-                    answer = JSON.parse(response.body).choices[0].text;
+                    answer = JSON.parse(response.body).choices[0].message.content;
                     log.debug('answer', answer);
                     break;
                 case 401:
@@ -120,7 +122,7 @@ define(['N/https', 'N/ui/serverWidget'],
                 container: 'custpage_fieldgroup'
             });
             answerText.defaultValue = '<br>' +
-                '<h2 style="color:#607799;">ChatNetsuite:</h2>' +
+                '<h2 style="color: #607799;">ChatNetsuite:</h2>' +
                 '<article style="font-size:medium;">' + answer + '</article>';
             answerText.defaultValue += '<br><br>' +
                 '<a href="' + SCRIPT_URL + '" style="color:#607799;">Back</a>';

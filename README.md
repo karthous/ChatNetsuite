@@ -1,6 +1,6 @@
 ![image](ChatNetsuite_logo.png)
 
-# ChatNetsuite 0.0.1
+# ChatNetsuite 0.0.2
 
 A basic chatbot with user interface deployed in Netsuite, using OpenAI&#39;s API.  
 
@@ -8,12 +8,13 @@ A basic chatbot with user interface deployed in Netsuite, using OpenAI&#39;s API
 
 ## Table of Contents
 
-- [Usage](#usage)
+- [Deployment](#deployment)
 - [Maintainers](#maintainers)
 - [Contributing](#contributing)
 - [Disclaimer](#disclaimer)
+- [Changelog](#changelog)
 
-## Usage
+## Deployment
 
 To use ChatNetsuite in NetSuite, you can follow these steps:
 
@@ -50,3 +51,7 @@ By using this software, you agree not to:
 4. Spreads misinformation.
 5. Target vulnerable groups.
 
+## Changelog  
+
+V0.02 - 13th April 2023:  
+Update the model from 'text-davinci-003' to 'gpt-3.5-turbo'.
