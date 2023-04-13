@@ -2,7 +2,9 @@
 
 # ChatNetsuite 0.0.1
 
-A basic chatbot with user interface deployed in Netsuite, using OpenAI&#39;s API.
+A basic chatbot with user interface deployed in Netsuite, using OpenAI&#39;s API.  
+
+[中文文档](README_sc.md)
 
 ## Table of Contents
 
