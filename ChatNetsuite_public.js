@@ -8,7 +8,7 @@
 define(['N/https', 'N/ui/serverWidget'],
     (https, serverWidget) => {
 
-        const VERSION_NO = '0.02';
+        const VERSION_NO = '0.03';
         // ENTER YOUR SCRIPT URL HERE
         const SCRIPT_URL = 'https://1234567.app.netsuite.com/app/site/hosting/scriptlet.nl?script=1234&deploy=1';
         const API_URL = 'https://api.openai.com/v1/chat/completions';
@@ -56,11 +56,17 @@ define(['N/https', 'N/ui/serverWidget'],
          */
         const answerPage = (scriptContext) => {
             let text = scriptContext.request.parameters.custpage_input;
-            log.debug("-> text", text);
+            let pastMsg = scriptContext.request.parameters.custpage_pstmsg;
+            let messages = [];
+            if (pastMsg) {
+                pastMsg = '[' + pastMsg + ']';
+                messages = JSON.parse(pastMsg);
+            }
+            messages.push({"role": 'user', "content": text});
             // Set payload
             let payload = {
                 "model": MODEL,
-                "messages": [{"role": 'user', "content": text}],
+                "messages": messages
                 // "temperature": 1,
                 // "top_p": 1,
                 // "n": 1,
@@ -72,60 +78,101 @@ define(['N/https', 'N/ui/serverWidget'],
                 body: JSON.stringify(payload),
                 headers: HEADERS
             });
-            log.debug('response body', JSON.parse(response.body));
             // Handle response codes
             let answer;
             switch (response.code) {
                 case 200:
                     answer = JSON.parse(response.body).choices[0].message.content;
-                    log.debug('answer', answer);
+                    messages.push(JSON.parse(response.body).choices[0].message);
                     break;
                 case 401:
                     answer = 'Incorrect API key provided';
+                    messages.push({"role": 'AI', "content": answer});
                     break;
                 case 402:
                     answer = 'Server refused to access, please try again later';
+                    messages.push({"role": 'AI', "content": answer});
                     break;
                 case 502:
                     answer = 'Bad Gateway';
+                    messages.push({"role": 'AI', "content": answer});
                     break;
                 case 503:
                     answer = 'Server is busy, please try again later';
+                    messages.push({"role": 'AI', "content": answer});
                     break;
                 case 504:
                     answer = 'Gateway Time-out';
+                    messages.push({"role": 'AI', "content": answer});
                     break;
                 case 500:
                     answer = 'Internal Server Error';
+                    messages.push({"role": 'AI', "content": answer});
                     break;
                 default:
                     answer = 'Unexpected Error';
+                    messages.push({"role": 'AI', "content": answer});
             }
             // Create form
             let form = serverWidget.createForm({
                 title: 'ChatNetsuite v' + VERSION_NO
             });
-            let fieldGroup = form.addFieldGroup({id:'custpage_fieldgroup', label:' '});
+            let fieldGroup = form.addFieldGroup({
+                id: 'custpage_field_group_form',
+                label: ' '
+            });
             fieldGroup.isSingleColumn = true;
+            let bodyText = form.addField({
+                id: 'custpage_body_text',
+                type: serverWidget.FieldType.INLINEHTML,
+                label: ' ',
+                container: 'custpage_field_group_form'
+            });
+            bodyText.defaultValue = '<br>';
+            messages.forEach((message, index) => {
+                if (index % 2 === 0) {
+                    bodyText.defaultValue += '<h2 style="color:#607799;">You:</h2>' +
+                        '<article style="font-size:medium;">' + message.content + '</article><br>';
+                } else {
+                    bodyText.defaultValue += '<h2 style="color:#607799;">ChatNetsuite:</h2>' +
+                        '<article style="font-size:medium;">' + message.content + '</article><br>';
+                }
+            });
+            bodyText.defaultValue += '<br>';
             let inputText = form.addField({
                 id: 'custpage_input',
-                type: serverWidget.FieldType.INLINEHTML,
-                label: 'You',
-                container: 'custpage_fieldgroup'
+                type: serverWidget.FieldType.LONGTEXT,
+                label: 'Input',
+                container: 'custpage_field_group_form'
             });
-            inputText.defaultValue = '<br><h2 style="color:#607799;">You:</h2>' +
-                '<article style="font-size:medium;">' + text + '</article>';
-            let answerText = form.addField({
-                id: 'custpage_answertext',
-                type: serverWidget.FieldType.INLINEHTML,
-                label: 'answer',
-                container: 'custpage_fieldgroup'
+            let fieldGroupEnd = form.addFieldGroup({
+                id: 'custpage_field_group_end',
+                label: ' '
             });
-            answerText.defaultValue = '<br>' +
-                '<h2 style="color: #607799;">ChatNetsuite:</h2>' +
-                '<article style="font-size:medium;">' + answer + '</article>';
-            answerText.defaultValue += '<br><br>' +
-                '<a href="' + SCRIPT_URL + '" style="color:#607799;">Back</a>';
+            let footText = form.addField({
+                id: 'custpage_footer',
+                type: serverWidget.FieldType.INLINEHTML,
+                label: ' ',
+                container: 'custpage_field_group_end'
+            });
+            footText.defaultValue = '<br>' +
+                '<a href="' + SCRIPT_URL + '" style="background-color: rgb(67 151 253); color: white; ' +
+                'text-decoration: none; font-weight: bold; ' +
+                'padding: 3px 12px; ' +
+                'border-style: solid; border-width: 1px; border-color: rgb(18 90 178); border-radius: 3px;">Back</a>';
+            let msgText = form.addField({
+                id: 'custpage_pstmsg',
+                type: serverWidget.FieldType.LONGTEXT,
+                label: ' ',
+                container: 'custpage_field_group_end'
+            });
+            msgText.defaultValue = '';
+            messages.forEach((message, j) => {
+                msgText.defaultValue += JSON.stringify(message);
+                if (j !== messages.length - 1) { msgText.defaultValue += ','; }
+            });
+            msgText.updateDisplayType({displayType: serverWidget.FieldDisplayType.HIDDEN});
+            form.addSubmitButton({label: 'Submit'});
             return form;
         }
 
