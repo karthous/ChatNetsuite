@@ -1,8 +1,8 @@
 ![image](ChatNetsuite_logo.png)
 
-# ChatNetsuite 0.0.3
+# ChatNetsuite 0.0.4
 
-A basic chatbot with user interface deployed in Netsuite, using OpenAI&#39;s API.  
+A chatbot with user interface deployed in Netsuite. Features include multi-round conversations and image generation.  
 
 ![image](ChatNetsuite_ui.png)
 
@@ -27,7 +27,7 @@ To use ChatNetsuite in NetSuite, you can follow these steps:
 5. Click on **Deploy Script**.
 6. Set script deployment configuration and click on **Save**.
 7. Click on the url under the field **URL**.
-8. Configure **OPENAI_KEY** and **SCRIPT_URL** in **ChatNetsuite_public.js** file.
+8. Configure **OPENAI_KEY** in **ChatNetsuite_public.js** file.
 9. Alternatively, click on **Edit** and configure **Links** to place ChatNetsuite on the navigation bar.
 10. Enjoy.
 
@@ -55,8 +55,13 @@ By using this software, you agree **not** to:
 
 ## Changelog  
 
+**V0.04 - 18th April 2023:**  
+Add image generation.  
+Add default prompt to improve the quality of answer and reduce token consumed.  
+
 **V0.03 - 14th April 2023:**  
-Support multi-round conversations and temporarily preserve chat history. Improve user interface.
+Support multi-round conversations and temporarily preserve chat history.  
+Improve user interface.
 
 **V0.02 - 13th April 2023:**  
 Update the model from 'text-davinci-003' to 'gpt-3.5-turbo'.

@@ -1,8 +1,8 @@
 ![image](ChatNetsuite_logo.png)
 
-# ChatNetsuite 0.0.2
+# ChatNetsuite 0.0.4
 
-ChatNetsuite是一个部署在Netsuite上的带有用户界面的聊天机器人，使用OpenAI的API。  
+ChatNetsuite是一个部署在Netsuite上的带有用户界面的聊天机器人，具有多轮对话和生成图片的功能。  
 
 ![image](ChatNetsuite_ui.png)
 
@@ -24,7 +24,7 @@ ChatNetsuite是一个部署在Netsuite上的带有用户界面的聊天机器人
 5. 单击Deploy Script。
 6. 设置脚本部署配置并单击Save。
 7. 单击字段URL下的网址。
-8. 在ChatNetsuite_public.js文件中配置OPENAI_KEY和SCRIPT_URL。
+8. 在ChatNetsuite_public.js文件中配置OPENAI_KEY。
 9. 或者，单击编辑并配置链接，以将ChatNetsuite放置在导航栏上。
 10. 玩得开心。  
 
@@ -48,8 +48,13 @@ ChatNetsuite是一个部署在Netsuite上的带有用户界面的聊天机器人
 
 ## 更新日志
 
+**V0.04 - 2023年4月18日:**  
+增加生成图片功能。  
+添加默认提示词以改进回答质量和节约费用。
+
 **V0.03 - 2023年4月14日:**  
-支持多轮对话并临时保留聊天记录。改进用户界面
+支持多轮对话并临时保留聊天记录。  
+改进用户界面。
 
 **V0.02 - 2023年4月13日:**  
 将模型由 text-davinci-003 更新为 gpt-3.5-turbo
