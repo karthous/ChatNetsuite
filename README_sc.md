@@ -1,6 +1,6 @@
 ![image](ChatNetsuite_logo.png)
 
-# ChatNetsuite 0.0.4
+# ChatNetsuite 0.04
 
 ChatNetsuite是一个部署在Netsuite上的带有用户界面的聊天机器人，具有多轮对话和生成图片的功能。  
 
@@ -48,7 +48,7 @@ ChatNetsuite是一个部署在Netsuite上的带有用户界面的聊天机器人
 
 ## 更新日志
 
-**V0.04 - 2023年4月18日:**  
+**V0.04 - 2023年4月17日:**  
 增加生成图片功能。  
 添加默认提示词以改进回答质量和节约费用。
 

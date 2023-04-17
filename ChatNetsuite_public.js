@@ -8,55 +8,70 @@
 define(['N/https', 'N/ui/serverWidget'],
     (https, serverWidget) => {
 
-        const VERSION_NO = '0.03';
-        // ENTER YOUR SCRIPT URL HERE
-        const SCRIPT_URL = 'https://1234567.app.netsuite.com/app/site/hosting/scriptlet.nl?script=1234&deploy=1';
-        const API_URL = 'https://api.openai.com/v1/chat/completions';
+        const VERSION_NO = '0.04';
+        const CHAT_API_URL = 'https://api.openai.com/v1/chat/completions';
+        const DRAW_API_URL = 'https://api.openai.com/v1/images/generations';
         // ENTER YOUR API KEY HERE
         const OPENAI_KEY = 'sk-123456789012345678901234567890123456789012345678';
         const HEADERS = {
             'Content-Type': 'application/json; charset=utf-8',
             'Authorization': 'Bearer ' + OPENAI_KEY
         };
-        const MODEL = 'gpt-3.5-turbo';
+        const CHAT_MODEL = 'gpt-3.5-turbo';
 
         /**
          * Handles the request when a user visits the page.
          * If the request method is GET, the initPage will be rendered.
-         * Otherwise, the answerPage is rendered.
+         * Otherwise, the chatPage or drawPage is rendered based on users' choice.
          * @param {Object} scriptContext
          */
         const onRequest = (scriptContext) => {
             if (scriptContext.request.method === 'GET') {
                 scriptContext.response.writePage({pageObject: initPage()});
             } else {
-                scriptContext.response.writePage({pageObject: answerPage(scriptContext)});
+                const custpage_chat = scriptContext.request.parameters.custpage_chat;
+                const custpage_draw = scriptContext.request.parameters.custpage_draw;
+                if (custpage_chat === 'T') {
+                    scriptContext.response.writePage({pageObject: chatPage(scriptContext)});
+                } else if (custpage_draw === 'T') {
+                    scriptContext.response.writePage({pageObject: drawPage(scriptContext)});
+                }
             }
         }
 
         /**
-         * Creates an HTML form with two fields, a text input and a submit button.
-         * The form is initialized with the title 'ChatNetsuite v[VERSION_NO]'.
-         * The text input is labeled 'Input' and the submit button is labeled 'Ask'.
+         * Initializes a form with two checkbox fields representing two features
+         * and the title 'ChatNetsuite v[VERSION_NO]'.
          */
         const initPage = () => {
             let form = serverWidget.createForm({title: 'ChatNetsuite v' + VERSION_NO});
-            form.addField({id:'custpage_input', label:'Input', type: serverWidget.FieldType.LONGTEXT});
-            form.addSubmitButton({label: 'Ask'});
+            let chatField = form.addField({
+                id: 'custpage_chat',
+                label: 'Chat',
+                type: serverWidget.FieldType.CHECKBOX
+            });
+            let imageField = form.addField({
+                id: 'custpage_draw',
+                label: 'Create image',
+                type: serverWidget.FieldType.CHECKBOX
+            });
+            form.addSubmitButton({label: 'Submit'});
             return form;
         }
 
         /**
-         * Renders the answer page with the answer to the customer's query.
-         * It first retrieves the input text from the request parameter and
-         * makes an API call to OpenAI using the provided key and model to get the answer.
-         * The answer is parsed from the response body and a form with the input and answer is created.
-         * The form is then returned to the user.
+         * Renders the chat page with a form with the input and answer.
          * @param {Object} scriptContext
          */
-        const answerPage = (scriptContext) => {
+        const chatPage = (scriptContext) => {
             let text = scriptContext.request.parameters.custpage_input;
             let pastMsg = scriptContext.request.parameters.custpage_pstmsg;
+            if (!text) {
+                text = 'Act as a world-class teacher on all matters, ' +
+                    'who helps me learn by answering my questions. ' +
+                    'Help me master the topic I provide. ' +
+                    'Make your answer as short as possible. ';
+            }
             let messages = [];
             if (pastMsg) {
                 pastMsg = '[' + pastMsg + ']';
@@ -65,7 +80,7 @@ define(['N/https', 'N/ui/serverWidget'],
             messages.push({"role": 'user', "content": text});
             // Set payload
             let payload = {
-                "model": MODEL,
+                "model": CHAT_MODEL,
                 "messages": messages
                 // "temperature": 1,
                 // "top_p": 1,
@@ -74,7 +89,7 @@ define(['N/https', 'N/ui/serverWidget'],
             };
             // Make API call
             let response = https.post({
-                url: API_URL,
+                url: CHAT_API_URL,
                 body: JSON.stringify(payload),
                 headers: HEADERS
             });
@@ -142,24 +157,9 @@ define(['N/https', 'N/ui/serverWidget'],
             let inputText = form.addField({
                 id: 'custpage_input',
                 type: serverWidget.FieldType.LONGTEXT,
-                label: 'Input',
+                label: 'You:',
                 container: 'custpage_field_group_form'
             });
-            let fieldGroupEnd = form.addFieldGroup({
-                id: 'custpage_field_group_end',
-                label: ' '
-            });
-            let footText = form.addField({
-                id: 'custpage_footer',
-                type: serverWidget.FieldType.INLINEHTML,
-                label: ' ',
-                container: 'custpage_field_group_end'
-            });
-            footText.defaultValue = '<br>' +
-                '<a href="' + SCRIPT_URL + '" style="background-color: rgb(67 151 253); color: white; ' +
-                'text-decoration: none; font-weight: bold; ' +
-                'padding: 3px 12px; ' +
-                'border-style: solid; border-width: 1px; border-color: rgb(18 90 178); border-radius: 3px;">Back</a>';
             let msgText = form.addField({
                 id: 'custpage_pstmsg',
                 type: serverWidget.FieldType.LONGTEXT,
@@ -172,6 +172,87 @@ define(['N/https', 'N/ui/serverWidget'],
                 if (j !== messages.length - 1) { msgText.defaultValue += ','; }
             });
             msgText.updateDisplayType({displayType: serverWidget.FieldDisplayType.HIDDEN});
+            form.addSubmitButton({label: 'Submit'});
+            let chatField = form.addField({
+                id: 'custpage_chat',
+                label: 'Chat',
+                type: serverWidget.FieldType.TEXT
+            });
+            chatField.defaultValue = 'T';
+            chatField.updateDisplayType({displayType : serverWidget.FieldDisplayType.HIDDEN});
+            return form;
+        }
+
+        /**
+         * Renders the draw page with user input and the image generated.
+         * @param {Object} scriptContext
+         */
+        const drawPage = (scriptContext) => {
+            let text = scriptContext.request.parameters.custpage_input;
+            let form = serverWidget.createForm({title: 'ChatNetsuite v' + VERSION_NO});
+            let inputField = form.addField({
+                id: 'custpage_input',
+                label: 'Describe an image',
+                type: serverWidget.FieldType.LONGTEXT
+            });
+            if (text) {
+                // Set payload
+                let payload = {
+                    "prompt": text,
+                    // "n": 1,
+                    "size": '256x256',
+                    // "response_format": 'url'
+                };
+                // Make API call
+                let response = https.post({
+                    url: DRAW_API_URL,
+                    body: JSON.stringify(payload),
+                    headers: HEADERS
+                });
+                let answer;
+                switch (response.code) {
+                    case 200:
+                        answer = '';
+                        break;
+                    case 401:
+                        answer = 'Incorrect API key provided';
+                        break;
+                    case 402:
+                        answer = 'Server refused to access, please try again later';
+                        break;
+                    case 502:
+                        answer = 'Bad Gateway';
+                        break;
+                    case 503:
+                        answer = 'Server is busy, please try again later';
+                        break;
+                    case 504:
+                        answer = 'Gateway Time-out';
+                        break;
+                    case 500:
+                        answer = 'Internal Server Error';
+                        break;
+                    default:
+                        answer = 'Unexpected Error';
+                }
+                let imgUrl = JSON.parse(response.body).data[0].url;
+                let outputField = form.addField({
+                    id: 'custpage_output',
+                    label: 'Image generated',
+                    type: serverWidget.FieldType.INLINEHTML
+                });
+                outputField.defaultValue = answer;
+                if (answer === '') {
+                    outputField.defaultValue += '<img src="' + imgUrl + '" alt="' + text + '" />';
+                }
+            }
+            let imageField = form.addField({
+                id: 'custpage_draw',
+                label: 'Draw',
+                type: serverWidget.FieldType.TEXT
+            });
+            imageField.defaultValue = 'T';
+            imageField.updateDisplayType({displayType : serverWidget.FieldDisplayType.HIDDEN});
             form.addSubmitButton({label: 'Submit'});
             return form;
         }

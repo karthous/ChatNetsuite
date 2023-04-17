@@ -1,6 +1,6 @@
 ![image](ChatNetsuite_logo.png)
 
-# ChatNetsuite 0.0.4
+# ChatNetsuite 0.04
 
 A chatbot with user interface deployed in Netsuite. Features include multi-round conversations and image generation.  
 
@@ -55,7 +55,7 @@ By using this software, you agree **not** to:
 
 ## Changelog  
 
-**V0.04 - 18th April 2023:**  
+**V0.04 - 17th April 2023:**  
 Add image generation.  
 Add default prompt to improve the quality of answer and reduce token consumed.  
 
