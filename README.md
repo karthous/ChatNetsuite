@@ -2,7 +2,8 @@
 
 # ChatNetsuite 0.04
 
-A chatbot with user interface deployed in Netsuite. Features include multi-round conversations and image generation.  
+A chatbot deployed in **Netsuite**.  
+Features include **multi-round conversations** and **image generation**.  
 
 ![image](ChatNetsuite_ui.png)
 
