@@ -190,10 +190,16 @@ define(['N/https', 'N/ui/serverWidget'],
         const drawPage = (scriptContext) => {
             let text = scriptContext.request.parameters.custpage_input;
             let form = serverWidget.createForm({title: 'ChatNetsuite v' + VERSION_NO});
+            let fieldGroup = form.addFieldGroup({
+                id: 'custpage_field_group_form',
+                label: ' '
+            });
+            fieldGroup.isSingleColumn = true;
             let inputField = form.addField({
                 id: 'custpage_input',
                 label: 'Describe an image',
-                type: serverWidget.FieldType.LONGTEXT
+                type: serverWidget.FieldType.LONGTEXT,
+                container: 'custpage_field_group_form'
             });
             if (text) {
                 // Set payload
@@ -239,7 +245,8 @@ define(['N/https', 'N/ui/serverWidget'],
                 let outputField = form.addField({
                     id: 'custpage_output',
                     label: 'Image generated',
-                    type: serverWidget.FieldType.INLINEHTML
+                    type: serverWidget.FieldType.INLINEHTML,
+                    container: 'custpage_field_group_form'
                 });
                 outputField.defaultValue = answer;
                 if (answer === '') {
@@ -249,7 +256,8 @@ define(['N/https', 'N/ui/serverWidget'],
             let imageField = form.addField({
                 id: 'custpage_draw',
                 label: 'Draw',
-                type: serverWidget.FieldType.TEXT
+                type: serverWidget.FieldType.TEXT,
+                container: 'custpage_field_group_form'
             });
             imageField.defaultValue = 'T';
             imageField.updateDisplayType({displayType : serverWidget.FieldDisplayType.HIDDEN});

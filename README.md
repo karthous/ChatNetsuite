@@ -1,11 +1,10 @@
-![image](ChatNetsuite_logo.png)
-
 # ChatNetsuite 0.04
 
 A chatbot deployed in **Netsuite**.  
 Features include **multi-round conversations** and **image generation**.  
 
-![image](ChatNetsuite_ui.png)
+![image](ChatNetsuite_ui_chat.png)
+![image](ChatNetsuite_ui_draw.png)
 
 [中文文档](README_sc.md)
 
@@ -65,4 +64,6 @@ Support multi-round conversations and temporarily preserve chat history.
 Improve user interface.
 
 **V0.02 - 13th April 2023:**  
-Update the model from 'text-davinci-003' to 'gpt-3.5-turbo'.
+Update the model from 'text-davinci-003' to 'gpt-3.5-turbo'.  
+
+![image](ChatNetsuite_logo.png)

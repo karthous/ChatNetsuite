@@ -1,10 +1,9 @@
-![image](ChatNetsuite_logo.png)
-
 # ChatNetsuite 0.04
 
 ChatNetsuite是一个部署在Netsuite上的聊天机器人，具有**多轮对话**和**生成图片**的功能。  
 
-![image](ChatNetsuite_ui.png)
+![image](ChatNetsuite_ui_chat.png)
+![image](ChatNetsuite_ui_draw.png)
 
 [English Documentation](README.md)  
 
@@ -58,3 +57,5 @@ ChatNetsuite是一个部署在Netsuite上的聊天机器人，具有**多轮对�
 
 **V0.02 - 2023年4月13日:**  
 将模型由 text-davinci-003 更新为 gpt-3.5-turbo
+
+![image](ChatNetsuite_logo.png)
