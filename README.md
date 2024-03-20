@@ -1,10 +1,10 @@
-# ChatNetsuite 0.04
+# ChatNetsuite 0.05
 
 A chatbot deployed in **Netsuite**.  
 Features include **multi-round conversations** and **image generation**.  
 
 ![image](ChatNetsuite_ui_chat.png)
-![image](ChatNetsuite_ui_draw.png)
+![image](img-dalle3.png)
 
 [中文文档](README_sc.md)
 
@@ -20,7 +20,7 @@ Features include **multi-round conversations** and **image generation**.
 
 To use ChatNetsuite in NetSuite, you can follow these steps:
 
-1. Upload **chatNetsuite.js** to SuiteScripts folder in the File Cabinet.
+1. Upload **ChatNetsuite_public.js** & **ChatNetsuite_router_public.js** to SuiteScripts folder in the File Cabinet.
 2. Go to **Customization > Scripts > New**.
 3. Select **ChatNetsuite_public.js** and click on **Create Script Record**.
 4. Set the name of the script and click on **Save**.
@@ -54,6 +54,10 @@ By using this software, you agree **not** to:
 5. Target vulnerable groups.
 
 ## Changelog  
+
+**V0.05 - 20th March 2024:**  
+Update the image generation model to 'dall-e-3'.  
+Improve navigation bar.
 
 **V0.04 - 17th April 2023:**  
 Add image generation.  

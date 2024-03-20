@@ -8,16 +8,18 @@
 define(['N/https', 'N/ui/serverWidget'],
     (https, serverWidget) => {
 
-        const VERSION_NO = '0.04';
+        const VERSION_NO = '0.05';
         const CHAT_API_URL = 'https://api.openai.com/v1/chat/completions';
         const DRAW_API_URL = 'https://api.openai.com/v1/images/generations';
         // ENTER YOUR API KEY HERE
-        const OPENAI_KEY = 'sk-123456789012345678901234567890123456789012345678';
+        const OPENAI_API_KEY = 'sk-123456789012345678901234567890123456789012345678';
         const HEADERS = {
             'Content-Type': 'application/json; charset=utf-8',
-            'Authorization': 'Bearer ' + OPENAI_KEY
+            'Authorization': 'Bearer ' + OPENAI_API_KEY
         };
         const CHAT_MODEL = 'gpt-3.5-turbo';
+        const DRAW_MODEL = 'dall-e-3';
+        const DRAW_QUALITY = 'hd';
 
         /**
          * Handles the request when a user visits the page.
@@ -26,16 +28,14 @@ define(['N/https', 'N/ui/serverWidget'],
          * @param {Object} scriptContext
          */
         const onRequest = (scriptContext) => {
-            if (scriptContext.request.method === 'GET') {
-                scriptContext.response.writePage({pageObject: initPage()});
+            const custpage_chat = scriptContext.request.parameters.custpage_chat;
+            const custpage_draw = scriptContext.request.parameters.custpage_draw;
+            if (custpage_chat) {
+                scriptContext.response.writePage({pageObject: chatPage(scriptContext)});
+            } else if (custpage_draw) {
+                scriptContext.response.writePage({pageObject: drawPage(scriptContext)});
             } else {
-                const custpage_chat = scriptContext.request.parameters.custpage_chat;
-                const custpage_draw = scriptContext.request.parameters.custpage_draw;
-                if (custpage_chat === 'T') {
-                    scriptContext.response.writePage({pageObject: chatPage(scriptContext)});
-                } else if (custpage_draw === 'T') {
-                    scriptContext.response.writePage({pageObject: drawPage(scriptContext)});
-                }
+                scriptContext.response.writePage({pageObject: initPage()});
             }
         }
 
@@ -45,17 +45,16 @@ define(['N/https', 'N/ui/serverWidget'],
          */
         const initPage = () => {
             let form = serverWidget.createForm({title: 'ChatNetsuite v' + VERSION_NO});
-            let chatField = form.addField({
-                id: 'custpage_chat',
-                label: 'Chat',
-                type: serverWidget.FieldType.CHECKBOX
+            form.clientScriptModulePath = "./ChatNetsuite_router_public.js";
+            form = addBtnToPage(form, ['chat', 'draw']);
+            let news = form.addField({
+                id: 'custpage_news',
+                type: serverWidget.FieldType.INLINEHTML,
+                label: 'News'
             });
-            let imageField = form.addField({
-                id: 'custpage_draw',
-                label: 'Create image',
-                type: serverWidget.FieldType.CHECKBOX
-            });
-            form.addSubmitButton({label: 'Submit'});
+            news.defaultValue = "<h2 style='color:#607799;'>" +
+                "Click the buttons above to use the features such as multi-round conversations and image generation." +
+                "</h2>";
             return form;
         }
 
@@ -190,6 +189,8 @@ define(['N/https', 'N/ui/serverWidget'],
         const drawPage = (scriptContext) => {
             let text = scriptContext.request.parameters.custpage_input;
             let form = serverWidget.createForm({title: 'ChatNetsuite v' + VERSION_NO});
+            form.clientScriptModulePath = "./ChatNetsuite_router_public.js";
+            form = addBtnToPage(form, ['chat']);
             let fieldGroup = form.addFieldGroup({
                 id: 'custpage_field_group_form',
                 label: ' '
@@ -204,9 +205,11 @@ define(['N/https', 'N/ui/serverWidget'],
             if (text) {
                 // Set payload
                 let payload = {
+                    "model": DRAW_MODEL,
                     "prompt": text,
-                    // "n": 1,
-                    "size": '256x256',
+                    "n": 1,
+                    "size": '1024x1024',
+                    "quality": DRAW_QUALITY
                     // "response_format": 'url'
                 };
                 // Make API call
@@ -262,6 +265,26 @@ define(['N/https', 'N/ui/serverWidget'],
             imageField.defaultValue = 'T';
             imageField.updateDisplayType({displayType : serverWidget.FieldDisplayType.HIDDEN});
             form.addSubmitButton({label: 'Submit'});
+            return form;
+        }
+
+        const addBtnToPage = (form, btnNames=[]) => {
+            const buttons = {
+                chat: {
+                    id: 'custpage_chat',
+                    label: 'Chat',
+                    functionName: 'chat()'
+                },
+                draw: {
+                    id: 'custpage_draw',
+                    label: 'Draw',
+                    functionName: 'draw()'
+                },
+            };
+            btnNames.forEach(btnName => {
+                const button = buttons[btnName];
+                if (button) { form.addButton(button); }
+            });
             return form;
         }
 

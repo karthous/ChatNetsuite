@@ -3,7 +3,7 @@
 ChatNetsuite是一个部署在Netsuite上的聊天机器人，具有**多轮对话**和**生成图片**的功能。  
 
 ![image](ChatNetsuite_ui_chat.png)
-![image](ChatNetsuite_ui_draw.png)
+![image](img-dalle3.png)
 
 [English Documentation](README.md)  
 
@@ -16,7 +16,7 @@ ChatNetsuite是一个部署在Netsuite上的聊天机器人，具有**多轮对�
 
 ## 部署说明
 要在NetSuite中使用ChatNetsuite，您可以按照以下步骤操作：
-1. 将chatNetsuite.js上传到文件柜中的SuiteScripts文件夹中。
+1. 将ChatNetsuite_public.js和ChatNetsuite_router_public.js上传到文件柜中的SuiteScripts文件夹中。
 2. 转到Customization > Scripts > New。
 3. 选择ChatNetsuite_public.js并单击Create Script Record。
 4. 设置脚本的名称，然后单击Save。
@@ -46,6 +46,10 @@ ChatNetsuite是一个部署在Netsuite上的聊天机器人，具有**多轮对�
 5. 针对弱势群体。
 
 ## 更新日志
+
+**V0.05 - 2024年3月20日:**  
+将图片生成模型更新为 dall-e-3  
+改良了导航栏
 
 **V0.04 - 2023年4月17日:**  
 增加生成图片功能。  
