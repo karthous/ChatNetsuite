@@ -2,7 +2,7 @@
 
 ChatNetsuite是一个部署在Netsuite上的聊天机器人，具有**多轮对话**和**生成图片**的功能。  
 
-![image](ChatNetsuite_ui_chat.png)
+![image](ChatNetsuite_ui_chat_005.png)
 ![image](img-dalle3.png)
 
 [English Documentation](README.md)  

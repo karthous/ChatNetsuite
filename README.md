@@ -3,7 +3,7 @@
 A chatbot deployed in **Netsuite**.  
 Features include **multi-round conversations** and **image generation**.  
 
-![image](ChatNetsuite_ui_chat.png)
+![image](ChatNetsuite_ui_chat_005.png)
 ![image](img-dalle3.png)
 
 [中文文档](README_sc.md)
