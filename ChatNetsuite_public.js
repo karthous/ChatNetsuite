@@ -5,21 +5,21 @@
  * @email karthous@outlook.com
  * @since 2023.4
  */
-define(['N/https', 'N/ui/serverWidget'],
-    (https, serverWidget) => {
+define(['N/https', 'N/ui/serverWidget', 'N/file', './chatNetsuite_config'],
+    (https, serverWidget, file, config) => {
 
-        const VERSION_NO = '0.05';
-        const CHAT_API_URL = 'https://api.openai.com/v1/chat/completions';
-        const DRAW_API_URL = 'https://api.openai.com/v1/images/generations';
-        // ENTER YOUR API KEY HERE
-        const OPENAI_API_KEY = 'sk-123456789012345678901234567890123456789012345678';
-        const HEADERS = {
-            'Content-Type': 'application/json; charset=utf-8',
-            'Authorization': 'Bearer ' + OPENAI_API_KEY
-        };
-        const CHAT_MODEL = 'gpt-3.5-turbo';
-        const DRAW_MODEL = 'dall-e-3';
-        const DRAW_QUALITY = 'hd';
+        const {
+            VERSION_NO,
+            CHAT_API_URL,
+            DRAW_API_URL,
+            HEADERS,
+            CHAT_MODEL,
+            DRAW_MODEL,
+            DRAW_QUALITY,
+            PROMPT
+        } = config;
+
+        const clientScriptModulePath = "./chatNetsuite_router_public.js";
 
         /**
          * Handles the request when a user visits the page.
@@ -28,15 +28,9 @@ define(['N/https', 'N/ui/serverWidget'],
          * @param {Object} scriptContext
          */
         const onRequest = (scriptContext) => {
-            const custpage_chat = scriptContext.request.parameters.custpage_chat;
-            const custpage_draw = scriptContext.request.parameters.custpage_draw;
-            if (custpage_chat) {
-                scriptContext.response.writePage({pageObject: chatPage(scriptContext)});
-            } else if (custpage_draw) {
-                scriptContext.response.writePage({pageObject: drawPage(scriptContext)});
-            } else {
-                scriptContext.response.writePage({pageObject: initPage()});
-            }
+            const {custpage_chat, custpage_draw} = scriptContext.request.parameters;
+            scriptContext.response.writePage({
+                pageObject: custpage_chat ? chatPage(scriptContext) : custpage_draw ? drawPage(scriptContext) : initPage()});
         }
 
         /**
@@ -45,16 +39,14 @@ define(['N/https', 'N/ui/serverWidget'],
          */
         const initPage = () => {
             let form = serverWidget.createForm({title: 'ChatNetsuite v' + VERSION_NO});
-            form.clientScriptModulePath = "./ChatNetsuite_router_public.js";
+            form.clientScriptModulePath = clientScriptModulePath;
             form = addBtnToPage(form, ['chat', 'draw']);
             let news = form.addField({
                 id: 'custpage_news',
                 type: serverWidget.FieldType.INLINEHTML,
                 label: 'News'
             });
-            news.defaultValue = "<h2 style='color:#607799;'>" +
-                "Click the buttons above to use the features such as multi-round conversations and image generation." +
-                "</h2>";
+            news.defaultValue = "<small>If you need more features, send a request to the administrator.</small>";
             return form;
         }
 
@@ -66,10 +58,7 @@ define(['N/https', 'N/ui/serverWidget'],
             let text = scriptContext.request.parameters.custpage_input;
             let pastMsg = scriptContext.request.parameters.custpage_pstmsg;
             if (!text) {
-                text = 'Act as a world-class teacher on all matters, ' +
-                    'who helps me learn by answering my questions. ' +
-                    'Help me master the topic I provide. ' +
-                    'Make your answer as short as possible. ';
+                text = PROMPT;
             }
             let messages = [];
             if (pastMsg) {
@@ -131,6 +120,8 @@ define(['N/https', 'N/ui/serverWidget'],
             let form = serverWidget.createForm({
                 title: 'ChatNetsuite v' + VERSION_NO
             });
+            form.clientScriptModulePath = clientScriptModulePath;
+            form = addBtnToPage(form, ['draw']);
             let fieldGroup = form.addFieldGroup({
                 id: 'custpage_field_group_form',
                 label: ' '
@@ -148,7 +139,7 @@ define(['N/https', 'N/ui/serverWidget'],
                     bodyText.defaultValue += '<h2 style="color:#607799;">You:</h2>' +
                         '<article style="font-size:medium;">' + message.content + '</article><br>';
                 } else {
-                    bodyText.defaultValue += '<h2 style="color:#607799;">ChatNetsuite:</h2>' +
+                    bodyText.defaultValue += '<h2 style="color:#607799;">ChatNetSuite:</h2>' +
                         '<article style="font-size:medium;">' + message.content + '</article><br>';
                 }
             });
@@ -189,7 +180,7 @@ define(['N/https', 'N/ui/serverWidget'],
         const drawPage = (scriptContext) => {
             let text = scriptContext.request.parameters.custpage_input;
             let form = serverWidget.createForm({title: 'ChatNetsuite v' + VERSION_NO});
-            form.clientScriptModulePath = "./ChatNetsuite_router_public.js";
+            form.clientScriptModulePath = clientScriptModulePath;
             form = addBtnToPage(form, ['chat']);
             let fieldGroup = form.addFieldGroup({
                 id: 'custpage_field_group_form',
