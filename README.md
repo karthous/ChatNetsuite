@@ -10,11 +10,13 @@ Features include **multi-round conversations** and **image generation**.
 
 ## Table of Contents
 
-- [Deployment](#deployment)
-- [Maintainers](#maintainers)
-- [Contributing](#contributing)
-- [Disclaimer](#disclaimer)
-- [Changelog](#changelog)
+- [ChatNetsuite 0.06](#chatnetsuite-006)
+  - [Table of Contents](#table-of-contents)
+  - [Deployment](#deployment)
+  - [Maintainers](#maintainers)
+  - [Contributing](#contributing)
+  - [Disclaimer](#disclaimer)
+  - [Changelog](#changelog)
 
 ## Deployment
 
@@ -26,7 +28,7 @@ To use ChatNetsuite in NetSuite, you can follow these steps:
 4. Set the name of the script and click on **Save**.
 5. Click on **Deploy Script**.
 6. Set script deployment configuration and click on **Save**.
-7. Click on the url under the field **URL**.
+7. Configure script id in **ChatNetsuite_router_public** file.
 8. Configure **openai key** in **api_key.js** file.
 9. Alternatively, click on **Edit** and configure **Links** to place ChatNetsuite on the navigation bar.
 10. Enjoy.
@@ -55,7 +57,7 @@ By using this software, you agree **not** to:
 
 ## Changelog  
 
-**V0.06 - 29th August 2024:**
+**V0.06 - 29th August 2024:**  
 Simplify configuration.
 
 **V0.05 - 20th March 2024:**  
